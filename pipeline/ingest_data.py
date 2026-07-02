@@ -1,5 +1,6 @@
 import pandas as pd
 from sqlalchemy import create_engine
+import click
 
 
 dtype = {
@@ -26,14 +27,14 @@ parse_dates = [
     "tpep_dropoff_datetime"
 ]
 
-
-def main():
-    pg_user = 'root'
-    pg_password = 'root'
-    pg_host = 'localhost'
-    pg_db = 'ny_taxi'
-    pg_port = '5433'
-
+@click.command()
+@click.option('--pg-user', default='root', help='PostgreSQL user')
+@click.option('--pg-password', default='root', help='PostgreSQL password')
+@click.option('--pg-host', default='localhost', help='PostgreSQL host')
+@click.option('--pg-port', default=5433, type=int, help='PostgreSQL port')
+@click.option('--pg-db', default='ny_taxi', help='PostgreSQL database name')
+@click.option('--target-table', default='yellow_taxi_data', help='Target table name')
+def main(pg_user, pg_password, pg_host, pg_port, pg_db, target_table):
     year = 2021
     mounth = 1
 
@@ -54,12 +55,12 @@ def main():
     create_colums = True
     for chunk in df_iter:
         if create_colums:
-            chunk.head(n=0).to_sql(name='yellow_taxi_data',
+            chunk.head(n=0).to_sql(name=target_table,
                                 con=engine,
                                 if_exists='replace')
             create_colums = False
 
-        chunk.to_sql(name='yellow_taxi_data',
+        chunk.to_sql(name=target_table,
                      con=engine,
                      if_exists='append')
 
