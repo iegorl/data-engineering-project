@@ -41,7 +41,7 @@ def main(pg_user, pg_password, pg_host, pg_port, pg_db, target_table):
     prefix = 'https://github.com/DataTalksClub/nyc-tlc-data/releases/download/yellow/'
     file = f'{prefix}/yellow_tripdata_{year}-{mounth:02d}.csv.gz'
 
-    engine = create_engine(f'postgresql+psycopg://{pg_password}:{pg_user}@{pg_host}:{pg_port}/{pg_db}')
+    engine = create_engine(f'postgresql://{pg_password}:{pg_user}@{pg_host}:{pg_port}/{pg_db}')
 
 
     df_iter = pd.read_csv(
