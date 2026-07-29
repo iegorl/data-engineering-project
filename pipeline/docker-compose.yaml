@@ -1,0 +1,38 @@
+services:
+  pgdatabase:
+    image: postgres:18
+    container_name: pgdatabase
+    environment:
+      POSTGRES_USER: "root"
+      POSTGRES_PASSWORD: "root"
+      POSTGRES_DB: "ny_taxi"
+    volumes:
+      - "ny_taxi_postgres_data:/var/lib/postgresql"
+    ports:
+      - "5433:5432"
+    networks:
+      - pipeline_default
+
+
+
+  taxi_ingest:
+    build: .
+    image: ingest_data
+    container_name: taxi_ingest
+    depends_on:
+      - pgdatabase
+    networks:
+      - pipeline_default
+    command: >
+      --pg-user=root
+      --pg-password=root
+      --pg-host=pgdatabase
+      --pg-port=5432
+      --pg-db=ny_taxi
+
+networks:
+  pipeline_default:
+    driver: bridge
+
+volumes:
+  ny_taxi_postgres_data:
